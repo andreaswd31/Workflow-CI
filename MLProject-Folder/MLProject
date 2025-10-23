@@ -1,0 +1,10 @@
+name: ML-Kriteria-3-Training
+
+# Menentukan lingkungan yang akan digunakan
+conda_env: conda.yaml
+
+# Mendefinisikan titik masuk (entry point)
+entry_points:
+  main:
+    # Perintah yang akan dijalankan
+    command: "python modelling.py"
