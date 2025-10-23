@@ -11,7 +11,7 @@ jobs:
   train-build-push:
     runs-on: ubuntu-latest
 
-    # Set environment variables u
+    # Set environment variables
     env:
       # Ambil dari GitHub Secrets
       MLFLOW_TRACKING_URI: ${{ secrets.DAGSHUB_TRACKING_URI }}
@@ -32,12 +32,12 @@ jobs:
           python -m pip install --upgrade pip
           pip install mlflow==2.19.0 dagshub pandas
           
+      # --- Kriteria Basic (2 pts) ---
       - name: Run MLflow project
         run: mlflow run ./MLProject-Folder
         
+      # --- Kriteria Skilled (3 pts) ---
       - name: Get latest MLflow run_id
-        # Menjalankan skrip python kecil untuk mengambil run_id terakhir
-        # dan menyimpannya ke environment variable GitHub Actions
         run: |
           echo "LATEST_RUN_ID=$(python -c "
           import mlflow
@@ -57,7 +57,12 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add ./model_artifact
-          git commit -m "Kriteria 3 (Skilled): Add latest model artifact"
+          # Cek jika ada perubahan, baru commit
+          if ! git diff --staged --quiet; then
+            git commit -m "Kriteria 3 (Skilled): Add latest model artifact"
+          else
+            echo "No model artifact changes to commit."
+          fi
           
       - name: Push model artifact
         uses: ad-m/github-push-action@master
@@ -69,12 +74,10 @@ jobs:
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          username: ${{ secrets.DOCKEXRHUB_USERNAME }} # PERHATIKAN: Pastikan nama secret ini DOCKERHUB_USERNAME
           password: ${{ secrets.DOCKERHUB_TOKEN }}
           
       - name: Build Docker Model Image
-        # Menggunakan 'mlflow build-docker' untuk membuat image
-        # dari model yang ada di MLflow Tracking Server (DagsHub)
         run: |
           mlflow models build-docker \
             --model-uri "runs:/${{ env.LATEST_RUN_ID }}/model" \
@@ -84,11 +87,14 @@ jobs:
         run: docker push "${{ secrets.DOCKERHUB_USERNAME }}/${{ github.event.repository.name }}:latest"
 
       - name: Update link in Tautan ke Docker Hub.txt
-        #  save link image ke file
         run: |
           echo "https://hub.docker.com/r/${{ secrets.DOCKERHUB_USERNAME }}/${{ github.event.repository.name }}" > "Tautan ke Docker Hub.txt"
           git add "Tautan ke Docker Hub.txt"
-          git commit -m "Kriteria 3 (Advanced): Update Docker Hub link"
+          if ! git diff --staged --quiet; then
+            git commit -m "Kriteria 3 (Advanced): Update Docker Hub link"
+          else
+            echo "No Docker Hub link changes to commit."
+          fi
           
       - name: Push Docker Hub link
         uses: ad-m/github-push-action@master
