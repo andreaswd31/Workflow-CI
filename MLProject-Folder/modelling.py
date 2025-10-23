@@ -149,7 +149,7 @@ def train_model():
         mlflow.log_artifact(cm_path, "plots") 
         
         # Artefak 2: requirements.txt
-        mlflow.log_artifact("requirements.txt")
+        #mlflow.log_artifact("requirements.txt")
         
         # Artefak 3: Data Latih 
         mlflow.log_artifact("train_preprocessed.csv", "dataset")
