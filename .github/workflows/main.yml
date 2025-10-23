@@ -74,24 +74,31 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+      
+      - name: Set image name to lowercase
+        # Membuat env var baru 'IMAGE_NAME' dengan versi lowercase
+        run: echo "IMAGE_NAME=$(echo ${{ github.event.repository.name }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
           
       - name: Build Docker Model Image
-        # Menggunakan 'mlflow build-docker' untuk membuat image
-        # dari model yang ada di MLflow Tracking Server (DagsHub)
         run: |
           mlflow models build-docker \
             --model-uri "runs:/${{ env.LATEST_RUN_ID }}/model" \
-            --name "${{ secrets.DOCKERHUB_USERNAME }}/${{ github.event.repository.name }}:latest"
+            --name "${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:latest"
             
       - name: Push Docker Image to Docker Hub
-        run: docker push "${{ secrets.DOCKERHUB_USERNAME }}/${{ github.event.repository.name }}:latest"
+        # Menggunakan env var lowercase
+        run: docker push "${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:latest"
 
       - name: Update link in Tautan ke Docker Hub.txt
-        #  save link image ke file
         run: |
-          echo "https://hub.docker.com/r/${{ secrets.DOCKERHUB_USERNAME }}/${{ github.event.repository.name }}" > "Tautan ke Docker Hub.txt"
+          # Menggunakan env var lowercase
+          echo "https://hub.docker.com/r/${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}" > "Tautan ke Docker Hub.txt"
           git add "Tautan ke Docker Hub.txt"
-          git commit -m "Kriteria 3 (Advanced): Update Docker Hub link"
+          if ! git diff --staged --quiet; then
+            git commit -m "Kriteria 3 (Advanced): Update Docker Hub link"
+          else
+            echo "No Docker Hub link changes to commit."
+          fi
           
       - name: Push Docker Hub link
         uses: ad-m/github-push-action@master
