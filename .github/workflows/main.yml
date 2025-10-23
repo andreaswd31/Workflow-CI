@@ -33,7 +33,7 @@ jobs:
           pip install mlflow==2.19.0 dagshub pandas scikit-learn matplotlib seaborn
           
       - name: Run MLflow project
-        run: mlflow run ./MLProject-Folder --no-conda
+        run: mlflow run ./MLProject-Folder --env-manager=local
         
       - name: Get latest MLflow run_id
         # Menjalankan skrip python kecil untuk mengambil run_id terakhir
