@@ -12,14 +12,14 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_sc
 from sklearn.model_selection import train_test_split # Kita akan split data latih lagi untuk validasi
 
 # --- 1. Konfigurasi DagsHub ---
-DAGSHUB_USERNAME = "andreaswd31"
-DAGSHUB_REPO_NAME = "Eksperimen_SML_Andreas-Wirawan-Dananjaya"
+#DAGSHUB_USERNAME = "andreaswd31"
+#DAGSHUB_REPO_NAME = "Eksperimen_SML_Andreas-Wirawan-Dananjaya"
 
 # Inisialisasi DagsHub
-dagshub.init(repo_owner=DAGSHUB_USERNAME, repo_name=DAGSHUB_REPO_NAME, mlflow=True)
+#dagshub.init(repo_owner=DAGSHUB_USERNAME, repo_name=DAGSHUB_REPO_NAME, mlflow=True)
 
 # Set URI pelacakan MLflow ke DagsHub
-mlflow.set_tracking_uri(f"https://dagshub.com/{DAGSHUB_USERNAME}/{DAGSHUB_REPO_NAME}.mlflow")
+#mlflow.set_tracking_uri(f"https://dagshub.com/{DAGSHUB_USERNAME}/{DAGSHUB_REPO_NAME}.mlflow")
 
 # --- 2. Fungsi Helper ---
 
