@@ -11,6 +11,9 @@ jobs:
   train-build-push:
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: write
+
     # Set environment variables u
     env:
       # Ambil dari GitHub Secrets
